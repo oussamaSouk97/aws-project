@@ -1,0 +1,21 @@
+#!/bin/bash -i
+
+apt update
+
+#Install mysql
+apt install mysql-server -y
+
+#install sakila
+mkdir /home/sakila
+cd /home/sakila
+wget https://downloads.mysql.com/docs/sakila-db.tar.gz
+tar -xvzf sakila-db.tar.gz
+
+
+#Install sysbench
+apt install sysbench -y
+
+
+
+
+

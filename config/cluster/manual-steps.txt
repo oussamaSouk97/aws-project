@@ -1,0 +1,69 @@
+################
+## On master
+################
+
+sudo -i 
+
+mysql 
+
+SOURCE /home/sakila/sakila-db/sakila-schema.sql;SOURCE /home/sakila/sakila-db/sakila-data.sql;
+
+CREATE USER 'slave1'@'%';GRANT ALL ON *.* TO 'slave1'@'%'; 
+
+CREATE USER 'slave2'@'%';GRANT ALL  ON *.* TO 'slave2'@'%'; 
+
+CREATE USER 'slave3'@'%';GRANT ALL ON *.* TO 'slave3'@'%'; 
+
+CREATE USER 'proxy'@'%';GRANT ALL ON *.* TO 'proxy'@'%'; 
+
+FLUSH PRIVILEGES;FLUSH TABLES WITH READ LOCK;
+
+SHOW MASTER STATUS;   #get value of MASTER_LOG_FILE and MASTER_LOG_POS to use them in the slave setup
+
+UNLOCK TABLES;
+
+
+#################
+## On ech salve
+#################
+
+#### Slave1
+
+sudo -i
+
+mysql 
+
+SOURCE /home/sakila/sakila-db/sakila-schema.sql;SOURCE /home/sakila/sakila-db/sakila-data.sql;
+
+CHANGE MASTER TO MASTER_HOST='172.31.6.175', MASTER_USER='slave1', MASTER_LOG_FILE='binlog.000004', MASTER_LOG_POS= 1362385;
+START REPLICA;
+CREATE USER 'proxy'@'%';GRANT ALL ON *.* TO 'proxy'@'%';
+SHOW REPLICA STATUS\G;
+
+
+#### Slave2
+
+
+sudo -i
+
+mysql 
+
+SOURCE /home/sakila/sakila-db/sakila-schema.sql;SOURCE /home/sakila/sakila-db/sakila-data.sql;
+
+CHANGE MASTER TO MASTER_HOST='172.31.6.175', MASTER_USER='slave2', MASTER_LOG_FILE='binlog.000004', MASTER_LOG_POS= 1362385;
+START REPLICA;
+CREATE USER 'proxy'@'%';GRANT ALL ON *.* TO 'proxy'@'%';
+SHOW REPLICA STATUS\G;
+
+
+
+#### Slave3
+
+mysql 
+
+SOURCE /home/sakila/sakila-db/sakila-schema.sql;SOURCE /home/sakila/sakila-db/sakila-data.sql;
+
+CHANGE MASTER TO MASTER_HOST='172.31.6.175', MASTER_USER='slave3', MASTER_LOG_FILE='binlog.000004', MASTER_LOG_POS= 1362385;
+START REPLICA;
+CREATE USER 'proxy'@'%';GRANT ALL ON *.* TO 'proxy'@'%';
+SHOW REPLICA STATUS\G;

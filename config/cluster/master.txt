@@ -1,0 +1,24 @@
+#!/bin/bash -i
+
+apt update
+apt install mysql-server -y
+
+#install sakila
+mkdir /home/sakila
+cd /home/sakila
+wget https://downloads.mysql.com/docs/sakila-db.tar.gz
+tar -xvzf sakila-db.tar.gz
+
+
+# Mysql configuration
+cat > /etc/mysql/mysql.conf.d/mysqld.cnf <<EOL
+[mysqld]
+bind-address=0.0.0.0
+server-id=1
+binlog-do-db=sakila
+EOL
+
+service mysql restart;
+
+#Install sysbench
+apt install sysbench -y

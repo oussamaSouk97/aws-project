@@ -1,0 +1,5 @@
+sudo -i
+
+mysql
+
+SOURCE /home/sakila/sakila-db/sakila-schema.sql;SOURCE /home/sakila/sakila-db/sakila-data.sql;

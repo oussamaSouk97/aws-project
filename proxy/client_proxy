@@ -1,0 +1,63 @@
+#!/usr/bin/python3
+
+import socket
+import pickle
+import argparse
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument("proxy_dns", help="The DNS proxy")
+parser.add_argument(
+    "implmentation", help="mode of implementation (direct, random or custom)"
+)
+parser.add_argument("operation", help="mode of operation (write,read)")
+args = parser.parse_args()
+
+# Retrieve args
+proxy_dns = args.proxy_dns
+implmentation = args.implmentation
+operation = args.operation
+
+
+####################################################
+### Main function that send request the proxy server
+####################################################
+def main():
+
+    # Instantiate a new socket
+    s = socket.socket()
+    s.connect((proxy_dns, 5001))
+
+    if operation == "write":
+        # Query to send
+        cmd = """INSERT INTO category (name) VALUES ('manga');"""
+        cmd_type = operation
+        # build data json to send
+        obj = {"implementation": implmentation, "type": cmd_type, "command": cmd}
+        pickledobj = pickle.dumps(obj)
+        # Send request to server
+        s.send(pickledobj)
+        # Read server response
+        data = s.recv(1024)
+        data = pickle.loads(data)
+        print("\ninsert into master: " + data["response"])
+
+    if operation == "read":
+        # Query to send
+        cmd = "SELECT * FROM category where name = 'manga' ;"
+        cmd_type = operation
+        # build data json to send
+        obj = {"implementation": implmentation, "type": cmd_type, "command": cmd}
+        pickledobj = pickle.dumps(obj)
+        # Send request to server
+        s.send(pickledobj)
+        # Read server response
+        data = s.recv(1024)
+        data = pickle.loads(data)
+        print(data["handled by"], data["result"])
+
+    s.close()
+
+
+if __name__ == "__main__":
+    main()

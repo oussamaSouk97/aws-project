@@ -1,0 +1,11 @@
+#!/bin/bash 
+
+MASTER_PRIVATE_IP=$1
+SLAVE1_PRIVATE_IP=$2
+SLAVE2_PRIVATE_IP=$3
+SLAVE3_PRIVATE_IP=$4
+
+cd /home/ubuntu
+
+
+sudo nohup python3 proxy_pattern.py $MASTER_PRIVATE_IP --list $SLAVE1_PRIVATE_IP $SLAVE2_PRIVATE_IP $SLAVE3_PRIVATE_IP > log.txt 2>&1 &
